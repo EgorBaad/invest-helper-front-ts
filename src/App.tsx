@@ -1,25 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import MyDrawer from "./components/MyDrawer/MyDrawer";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Home } from "./components/Home/Home";
+import Portfolio from "./components/Portfolio/Portfolio";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Header from "./components/Header/Header";
+import styled from "@emotion/styled";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#551a8b",
+      light: "#E6AACE",
+      dark: "#3F1467",
+      contrastText: "#F0F4EF",
+    },
+    secondary: {
+      main: "#649072",
+      light: "#BFCC94",
+      dark: "#558564",
+      contrastText: "#F0F4EF",
+    },
+  },
+});
+
+const HeaderContainer = styled("div")`
+  display: flex;
+  flex-direction: row;
+`;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <BrowserRouter>
+          <HeaderContainer>
+            <MyDrawer text="Change view" />
+            <Header />
+          </HeaderContainer>
+
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   );
 }
 
