@@ -6,6 +6,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import React from "react";
 import styled from "@emotion/styled";
 import { InvestApi } from "../../../api/InvestApi";
+import { useFormik } from "formik";
 
 const Expander = styled(Button)`
   position: absolute;
@@ -24,16 +25,25 @@ const DrawerArea = styled(Box)`
 
 export default function Settings() {
   const [isDrawn, setIsDrawn] = React.useState(false);
+  const [tokenError, setTokenError] = React.useState("");
   const toggleDrawer = (open: boolean) => () => {
     setIsDrawn(open);
   };
 
-  const setToken = () => () => {
-    const input = document.getElementById("input-token") as HTMLInputElement;
-    const token = input?.value;
+  const setToken = (token: string) => {
+    InvestApi.setToken(token).catch(() => {
+      setTokenError("Failed to set token");
+    });
+  };
 
-    InvestApi.setToken(token);
-  }
+  const formik = useFormik({
+    initialValues: {
+      token: "",
+    },
+    onSubmit: (values) => {
+      setToken(values.token);
+    },
+  });
 
   return (
     <div>
@@ -47,11 +57,27 @@ export default function Settings() {
       </Expander>
       <Drawer anchor={"right"} open={isDrawn} onClose={toggleDrawer(false)}>
         <DrawerArea role="presentation">
-          <Box>
-            <h1>Settings</h1>
-          </Box>
-          <TextField id="input-token" label="Token" />
-          <Button css={{marginTop: "12px"}} variant="contained" onClick={setToken()}>Save</Button>
+          <form onSubmit={formik.handleSubmit}>
+            <Box>
+              <h1>Settings</h1>
+            </Box>
+            <TextField
+              onChange={formik.handleChange}
+              name="token"
+              id="token"
+              label="Token"
+              value={formik.values.token}
+              error={tokenError ? true : false}
+              helperText={tokenError ? tokenError : ""}
+            />
+            <Button
+              css={{ marginTop: "12px" }}
+              variant="contained"
+              type="submit"
+            >
+              Save
+            </Button>
+          </form>
         </DrawerArea>
       </Drawer>
     </div>
