@@ -26,6 +26,10 @@ const MenuButton = styled(Button)`
   }
 `;
 
+const MenuItem = styled(Link)`
+  width: 100%;
+`
+
 const Expander = styled(Button)`
   font-weight: 700;
   margin: 6px;
@@ -65,20 +69,20 @@ export default function MyDrawer(props: IMyDrawerProps) {
         >
           <List>
             <ListItem>
-              <MenuButton>
-                <Link to="/">
+              <MenuItem to="/">
+                <MenuButton>
                   <HomeOutlinedIcon />
                   {"Home"}
-                </Link>
-              </MenuButton>
+                </MenuButton>
+              </MenuItem>
             </ListItem>
             <ListItem>
-              <MenuButton>
-                <Link to="/portfolio">
+              <MenuItem to="/portfolio">
+                <MenuButton>
                   <CasesOutlinedIcon />
                   {"Portfolio"}
-                </Link>
-              </MenuButton>
+                </MenuButton>
+              </MenuItem>
             </ListItem>
           </List>
         </Box>
