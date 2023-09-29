@@ -7,6 +7,7 @@ import Portfolio from "./components/Portfolio/Portfolio";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "./components/Header/Header";
 import styled from "@emotion/styled";
+import { Box } from "@mui/material";
 
 const theme = createTheme({
   palette: {
@@ -30,6 +31,10 @@ const HeaderContainer = styled("div")`
   flex-direction: row;
 `;
 
+const ActionArea = styled(Box)`
+  padding: 6px;
+`
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -39,11 +44,12 @@ function App() {
             <MyDrawer text="Change view" />
             <Header />
           </HeaderContainer>
-
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-          </Routes>
+          <ActionArea>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+            </Routes>
+          </ActionArea>
         </BrowserRouter>
       </div>
     </ThemeProvider>
