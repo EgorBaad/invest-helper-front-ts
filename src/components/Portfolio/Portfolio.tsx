@@ -1,11 +1,19 @@
 /** @jsxImportSource @emotion/react */
 //eslint-disable-next-line
 import { jsx } from "@emotion/react";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  LinearProgress,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import React from "react";
 import { InvestApi } from "../../api/InvestApi";
 import Cookies from "universal-cookie";
-import { useFormik } from "formik";
 
 interface IAccount {
   id: string;
@@ -16,25 +24,33 @@ export default function Portfolio() {
   const [account, setAccount] = React.useState("");
   const [accountList, setAccountList] = React.useState([]);
   const [accountListLoaded, setAccountListLoaded] = React.useState(false);
-  const [showAccountsLoader, setShowAccountsLoader] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   React.useEffect(() => {
     if (!accountListLoaded) {
       const cookies = new Cookies();
-      setShowAccountsLoader(true);
-      InvestApi.getAccounts(cookies.get("api-token")).then((result) => {
-        setAccountList(
-          result.map((acc: IAccount) => {
-            return <MenuItem value={acc.id}>{acc.name}</MenuItem>;
-          })
-        );
-      });
+      InvestApi.getAccounts(cookies.get("api-token"))
+        .then((result) => {
+          setAccountList(
+            result.map((acc: IAccount) => {
+              return <MenuItem value={acc.id}>{acc.name}</MenuItem>;
+            })
+          );
+          setAccountListLoaded(true);
+        })
+        .catch(() => {
+          setError("Unable to load accounts");
+          setAccountListLoaded(true);
+        });
     }
   }, [accountListLoaded]);
 
   return (
     <Box>
-      <FormControl>
+      <FormControl
+        css={!accountListLoaded && { opacity: "50%" }}
+        error={error ? true : false}
+      >
         <InputLabel id="account-input-label">Account</InputLabel>
         <Select
           labelId="account-input-label"
@@ -43,11 +59,18 @@ export default function Portfolio() {
           onChange={(e) => {
             setAccount(e.target.value);
           }}
-          css = {{width: "300px"}}
+          css={{ width: "300px" }}
         >
           {accountList}
         </Select>
+        {error && <FormHelperText>{error}</FormHelperText>}
+        {!accountListLoaded && (
+          <LinearProgress
+            css={{ position: "absolute", width: "300px", top: "50%" }}
+          />
+        )}
       </FormControl>
+      {error && <Button color="warning" variant="contained" onClick={() => {setAccountListLoaded(false)}}>Reload</Button>}
     </Box>
   );
 }
