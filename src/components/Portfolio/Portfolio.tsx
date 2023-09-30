@@ -37,6 +37,7 @@ export default function Portfolio() {
             })
           );
           setAccountListLoaded(true);
+          setError("");
         })
         .catch(() => {
           setError("Unable to load accounts");
