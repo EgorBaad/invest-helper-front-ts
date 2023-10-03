@@ -10,10 +10,12 @@ import {
   LinearProgress,
   MenuItem,
   Select,
+  SelectChangeEvent,
 } from "@mui/material";
 import React from "react";
 import { InvestApi } from "../../api/InvestApi";
 import Cookies from "universal-cookie";
+import PortfolioTable from "./PortfolioTable/PortfolioTable";
 
 interface IAccount {
   id: string;
@@ -25,6 +27,11 @@ export default function Portfolio() {
   const [accountList, setAccountList] = React.useState([]);
   const [accountListLoaded, setAccountListLoaded] = React.useState(false);
   const [error, setError] = React.useState("");
+
+  const handleAccountChange = (event: SelectChangeEvent) => {
+    console.log("Fire! " + event.target.value);
+    setAccount(event.target.value);
+  };
 
   React.useEffect(() => {
     if (!accountListLoaded) {
@@ -57,9 +64,7 @@ export default function Portfolio() {
           labelId="account-input-label"
           value={account}
           label={"Account"}
-          onChange={(e) => {
-            setAccount(e.target.value);
-          }}
+          onChange={handleAccountChange}
           css={{ width: "300px" }}
         >
           {accountList}
@@ -71,7 +76,18 @@ export default function Portfolio() {
           />
         )}
       </FormControl>
-      {error && <Button color="warning" variant="contained" onClick={() => {setAccountListLoaded(false)}}>Reload</Button>}
+      {error && (
+        <Button
+          color="warning"
+          variant="contained"
+          onClick={() => {
+            setAccountListLoaded(false);
+          }}
+        >
+          Reload
+        </Button>
+      )}
+      <Box css={{paddingTop: "12px"}}>{account && <PortfolioTable accountId={account} />}</Box>
     </Box>
   );
 }
