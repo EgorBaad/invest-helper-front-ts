@@ -8,6 +8,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "./components/Header/Header";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
+import BondCalculator from "./components/BondCalculator/BondCalculator";
 
 const theme = createTheme({
   palette: {
@@ -49,6 +50,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/bond-calculator" element={<BondCalculator />} />
             </Routes>
           </ActionArea>
         </BrowserRouter>

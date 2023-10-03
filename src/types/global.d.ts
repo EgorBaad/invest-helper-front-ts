@@ -17,3 +17,14 @@ declare interface IMoneyValue {
   currency: string;
   value: number;
 }
+
+declare interface IBond {
+  figi: string;
+  ticker: string;
+  lot: number;
+  currency: string;
+  country: string;
+  name: string;
+  nominal: IMoneyValue;
+  qualOnly: boolean;
+}

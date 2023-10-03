@@ -34,4 +34,14 @@ export class InvestApi {
     });
     return await req.json();
   }
+
+  static async getAllBonds(token: string) {
+    const req = await fetch(this.url + "bond/all", {
+      method: "GET",
+      headers: {
+        token: token,
+      },
+    });
+    return await req.json();
+  }
 }

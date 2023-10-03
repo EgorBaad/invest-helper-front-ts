@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import CasesOutlinedIcon from "@mui/icons-material/CasesOutlined";
 import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
+import FunctionsIcon from '@mui/icons-material/Functions';
 import { List, ListItem } from "@mui/material";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -81,6 +82,14 @@ export default function MyDrawer(props: IMyDrawerProps) {
                 <MenuButton>
                   <CasesOutlinedIcon />
                   {"Portfolio"}
+                </MenuButton>
+              </MenuItem>
+            </ListItem>
+            <ListItem>
+              <MenuItem to="/bond-calculator">
+                <MenuButton>
+                  <FunctionsIcon />
+                  {"Bond calculator"}
                 </MenuButton>
               </MenuItem>
             </ListItem>
