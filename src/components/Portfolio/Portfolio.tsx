@@ -29,7 +29,6 @@ export default function Portfolio() {
   const [error, setError] = React.useState("");
 
   const handleAccountChange = (event: SelectChangeEvent) => {
-    console.log("Fire! " + event.target.value);
     setAccount(event.target.value);
   };
 
@@ -40,7 +39,7 @@ export default function Portfolio() {
         .then((result) => {
           setAccountList(
             result.map((acc: IAccount) => {
-              return <MenuItem value={acc.id}>{acc.name}</MenuItem>;
+              return <MenuItem value={acc.id} key={acc.id}>{acc.name}</MenuItem>;
             })
           );
           setAccountListLoaded(true);
