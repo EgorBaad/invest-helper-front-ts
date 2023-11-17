@@ -44,4 +44,14 @@ export class InvestApi {
     });
     return await req.json();
   }
+
+  static async getBondByFigi(token: string, figi: string) {
+    const req = await fetch(this.url + "bond/" + figi, {
+      method: "GET",
+      headers: {
+        token: token,
+      },
+    });
+    return await req.json();
+  }
 }

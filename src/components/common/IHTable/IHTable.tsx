@@ -14,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface IIHTableProps {
   data: Array<any>;
@@ -22,6 +23,8 @@ interface IIHTableProps {
   groupBy?: string;
   paging?: boolean;
   keyValue?: string;
+  delete?: boolean;
+  deleteAction?: () => void;
 }
 
 const Divider = styled(TableCell)(({ theme }) => ({
@@ -32,12 +35,15 @@ const Divider = styled(TableCell)(({ theme }) => ({
 export default function IHTable(props: IIHTableProps) {
   const [page, setPage] = React.useState(0);
   const [rows, setRows] = React.useState([<></>]);
-  const [loaded, setLoaded] = React.useState(false);
+  const [rowsData, setRowsData] = React.useState(Array<any>);
   const pageSize = 15;
   const theme = useTheme();
-  const headers = props.headers.map((h: string) => {
-    return <TableCell>{h}</TableCell>;
-  });
+  const headers = [
+    props.headers.map((h: string) => {
+      return <TableCell>{h}</TableCell>;
+    }),
+    props.delete ? <TableCell>Remove</TableCell> : <></>,
+  ];
   let uniqueGroupValues = new Array<string>();
 
   const getRowKey = (item: any) => {
@@ -61,42 +67,30 @@ export default function IHTable(props: IIHTableProps) {
   };
 
   const mapValues = (item: any) => {
-    const cells = props.sources.map((source) => {
-      const relativePath = source;
-      let parent = item;
-      let property = source;
-      if (relativePath.indexOf(".") >= 0) {
-        const splutPath = relativePath.split(".");
-        for (let i = 0; i < splutPath.length - 1; i++) {
-          parent = parent[splutPath[i]];
+    const cells = [
+      props.sources.map((source) => {
+        const relativePath = source;
+        let parent = item;
+        let property = source;
+        if (relativePath.indexOf(".") >= 0) {
+          const splutPath = relativePath.split(".");
+          for (let i = 0; i < splutPath.length - 1; i++) {
+            parent = parent[splutPath[i]];
+          }
+          property = splutPath[splutPath.length - 1];
         }
-        property = splutPath[splutPath.length - 1];
-      }
-      return <TableCell key={property}>{parent[property]}</TableCell>;
-    });
+        return <TableCell key={property}>{parent[property]}</TableCell>;
+      }),
+      props.delete ? (
+        <TableCell key={"delete"} onClick={props.deleteAction}>
+          <ClearIcon css={{ cursor: "pointer" }} />
+        </TableCell>
+      ) : (
+        <></>
+      ),
+    ];
     return <TableRow key={getRowKey(item)}>{cells}</TableRow>;
   };
-
-  if (props.groupBy) {
-    let splutPath = new Array<string>();
-    let property = props.groupBy;
-    if (props.groupBy.indexOf(".") >= 0) {
-      splutPath = props.groupBy.split(".");
-    }
-    for (let i = 0; i < props.data.length; i++) {
-      let parent = props.data[i];
-      if (splutPath.length > 0) {
-        for (let i = 0; i < splutPath.length - 1; i++) {
-          parent = parent[splutPath[i]];
-        }
-        property = splutPath[splutPath.length - 1];
-      }
-      if (!uniqueGroupValues.includes(parent[property])) {
-        uniqueGroupValues.push(parent[property]);
-      }
-    }
-    console.log(uniqueGroupValues);
-  }
 
   const handlePageChange = (event: React.MouseEvent | null, page: number) => {
     setPage(page);
@@ -108,8 +102,29 @@ export default function IHTable(props: IIHTableProps) {
   };
 
   React.useEffect(() => {
+    // if (props.groupBy) {
+    //   let splutPath = new Array<string>();
+    //   let property = props.groupBy;
+    //   if (props.groupBy.indexOf(".") >= 0) {
+    //     splutPath = props.groupBy.split(".");
+    //   }
+    //   for (let i = 0; i < props.data.length; i++) {
+    //     let parent = props.data[i];
+    //     if (splutPath.length > 0) {
+    //       for (let i = 0; i < splutPath.length - 1; i++) {
+    //         parent = parent[splutPath[i]];
+    //       }
+    //       property = splutPath[splutPath.length - 1];
+    //     }
+    //     if (!uniqueGroupValues.includes(parent[property])) {
+    //       uniqueGroupValues.push(parent[property]);
+    //     }
+    //   }
+    //   console.log(uniqueGroupValues);
+    // }
+
     handlePageChange(null, 0);
-  }, [props.data]);
+  }, [props.data, props.groupBy]);
 
   return (
     <Box>
