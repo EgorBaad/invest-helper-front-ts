@@ -15,6 +15,7 @@ import React, { ReactNode } from "react";
 import { InvestApi } from "../../../api/InvestApi";
 import Cookies from "universal-cookie";
 import { styled } from "@mui/material/styles";
+import IHTable from "../../common/IHTable/IHTable";
 
 interface IPortfolioTableProps {
   accountId: string;
@@ -51,59 +52,13 @@ export default function PortfolioTable(props: IPortfolioTableProps) {
     accountId: "",
   });
   const [portfolioLoaded, setPortfolioLoaded] = React.useState(false);
-  const theme = useTheme();
 
   React.useEffect(() => {
     if (!portfolioLoaded || props.accountId !== portfolio.accountId) {
       const cookies = new Cookies();
       InvestApi.getPortfolio(cookies.get("api-token"), props.accountId).then(
         (result) => {
-          result.accountId = props.accountId;
-          setPortfolio({
-            ...result,
-            bondRows: result.positionList.map(
-              (position: IPortfolioPosition) => {
-                if (position.type === "bond") {
-                  return (
-                    <TableRow>
-                      <TableCell>{position.instrumentInfo.ticker}</TableCell>
-                      <TableCell>{position.instrumentInfo.name}</TableCell>
-                      <TableCell>{position.quantity}</TableCell>
-                      <TableCell>
-                        {position.currentPrice.value +
-                          "(" +
-                          position.currentPrice.currency +
-                          ")"}
-                      </TableCell>
-                    </TableRow>
-                  );
-                } else {
-                  return <></>;
-                }
-              }
-            ),
-            shareRows: result.positionList.map(
-              (position: IPortfolioPosition) => {
-                if (position.type === "share") {
-                  return (
-                    <TableRow>
-                      <TableCell>{position.instrumentInfo.ticker}</TableCell>
-                      <TableCell>{position.instrumentInfo.name}</TableCell>
-                      <TableCell>{position.quantity}</TableCell>
-                      <TableCell>
-                        {position.currentPrice.value +
-                          "(" +
-                          position.currentPrice.currency +
-                          ")"}
-                      </TableCell>
-                    </TableRow>
-                  );
-                } else {
-                  return <></>;
-                }
-              }
-            ),
-          });
+          setPortfolio({ ...result, accountId: props.accountId });
           setPortfolioLoaded(true);
         }
       );
@@ -112,40 +67,21 @@ export default function PortfolioTable(props: IPortfolioTableProps) {
 
   return (
     <Box>
-      <TableContainer>
-        <Table size="small">
-          <TableHead
-            css={{
-              backgroundColor: theme.palette.secondary.main,
-              borderTopLeftRadius: "5px",
-              borderTopRightRadius: "5px",
-              "& th": {
-                color: theme.palette.secondary.contrastText,
-                fontWeight: "bold",
-              },
-            }}
-          >
-            <TableCell>Ticker</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Quantity</TableCell>
-            <TableCell>Current price</TableCell>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <Divider colSpan={4} align="center">
-                Shares
-              </Divider>
-            </TableRow>
-            {portfolio.shareRows}
-            <TableRow>
-              <Divider colSpan={4} align="center">
-                Bonds
-              </Divider>
-            </TableRow>
-            {portfolio.bondRows}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {portfolio.positionList && (
+        <IHTable
+          data={portfolio.positionList}
+          headers={["Ticker", "Name", "Quantity", "Current price"]}
+          sources={[
+            "instrumentInfo.ticker",
+            "instrumentInfo.name",
+            "quantity",
+            "currentPrice.value",
+          ]}
+          groupBy={"type"}
+          keyValue="instrumentInfo.ticker"
+          paging
+        />
+      )}
     </Box>
   );
 }
